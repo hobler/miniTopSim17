@@ -1,8 +1,7 @@
 # miniTopSim
-Project of the Seminar "Scientific Programming in Python" WS 2017/18
+Project of the Seminar "Scientific Programming in Python" WS 2017/18.
 
-## Set $PYTHONPATH to find modules (assuming you are in the directory where
-## this readme resides):
+Set $PYTHONPATH to find modules (assuming you are in the directory where this readme resides):
 ```bash
 export PYTHONPATH="$(pwd)/code:$PYTHONPATH"
 ```
@@ -15,13 +14,15 @@ In diesem README finden Sie folgende Informationen:
     4. Hinweise zur Präsentation
     
     
-1. Allgemeine Hinweise
 ----------------------
+1. Allgemeine Hinweise
 
 - Benützen Sie ausschließlich die folgenden Verzeichnisse:
 
     code - für miniTopSim code (*.py Files) und die Parameterdatenbank (parameters.db)
+    
     tables - für Tabellen (nur bei einigen Aufgaben)
+    
     work/AufgabeXX_YYY - alle Files, die nur für Ihre Aufgabe von Bedeutung sind, insbesondere alle cfg-, srf- und png-Files, alle Tests und Plot-Skripts, die nur für Ihre Aufgabe relevant sind. XX bezeichnet die Nummer Ihrer Aufgabe, YYY einen erklärenden String (wird in der Aufgabenstellung angegeben).
 
 - Sie können den Code jederzeit herunterladen (fetch bzw. pull). Uploaden (push) aber bitte erst NACH der Präsentation.
@@ -81,25 +82,25 @@ Im Programm werden die Parameter über das parameters Modul (Datei parameters.py
 importiert. Die Parameter stehen als Modulvariablen des parameters Modul zur Verfügung, d.h. sie können unter den Namen par.ParameterNameI (ParameterNameI entsprechend ersetzen) angesprochen werden.
 
 
-3. Testen
 ---------
+3. Testen
 
 Für das Testen verwenden wir Pytest. ACHTUNG: Es gibt ein altes Tool gleichen Namens, das auf einigen Linux-Distributionen noch installiert ist. Falls Sie nicht die Anaconda-Distribution verwenden, vergewissern Sie sich, dass Sie mit dem richtigen Tool arbeiten.
 
 Ihre Tests sollen sowohl vom Arbeitsverzeichnis aus aufgerufen laufen (solange Sie daran arbeiten), als auch vom miniTopSim-Verzeichnis (mit "pytest" laufen dann alle Tests des Projekts). Damit die Tests den miniTopSim-Code importieren können, auch wenn PYTHONPATH nicht als Umgebungsvariable gesetzt ist, fügen Sie am Beginn Ihrer Tests folgende Zeilen ein:
 
-import os, sys
-filedir = os.path.dirname(__file__)
-codedir = os.path.join(filedir, '..', ’..’, ’code’)
-sys.path.insert(0, codedir)
+    import os, sys
+    filedir = os.path.dirname(__file__)
+    codedir = os.path.join(filedir, '..', ’..’, ’code’)
+    sys.path.insert(0, codedir)
 
 Tests müssen ein assert Statement enthalten (siehe Vortragsfolien).
 
 Die in den Angaben verlangten Tests stellen ein Minimum dar. Sie können auch weitere Tests definieren. Achten Sie aber darauf, dass diese kurz (bezüglich Rechenzeit) sind.
 
 
-4. Hinweise zur Präsentation
 ----------------------------
+4. Hinweise zur Präsentation
 
 Sie sollen Ihre Arbeit in einem ca. 10-15-minütigen Vortrag präsentieren. Halten Sie den Vortrag in erster Linie für Ihre Kollegen und berücksichtigen Sie deren Wissensstand. Ihr Vortrag soll die Aufgabenstellung darlegen, den Code präsentieren und die Ergebnisse der Tests und/oder Simulationen beschreiben. Sie können dazu mehrere Hilfsmittel verwenden, Powerpoint-Präsentation, Spyder, Editor. Sie können Ihren Laptop verwenden oder Ihre Files auf einem USB-Stick mitbringen. Unser Rechner hat Powerpoint und Spyder installiert. Kurze Rechnungen können Sie online laufen lassen, bei längeren wird es angebracht sein, die Ergebnisse vorzubereiten.
 
