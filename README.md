@@ -16,6 +16,7 @@ In diesem README finden Sie folgende Informationen:
     
 ----------------------
 1. Allgemeine Hinweise
+----------------------
 
 - Benützen Sie ausschließlich die folgenden Verzeichnisse:
 
@@ -38,6 +39,7 @@ In diesem README finden Sie folgende Informationen:
 Lesen Sie sorgfältig die Folien "Working with GitHub" aus Kapitel VI der Vorlesung. 
 
 
+-------------------------------------
 2. Spezifizieren der Eingabeparameter
 -------------------------------------
 
@@ -84,6 +86,7 @@ importiert. Die Parameter stehen als Modulvariablen des parameters Modul zur Ver
 
 ---------
 3. Testen
+---------
 
 Für das Testen verwenden wir Pytest. ACHTUNG: Es gibt ein altes Tool gleichen Namens, das auf einigen Linux-Distributionen noch installiert ist. Falls Sie nicht die Anaconda-Distribution verwenden, vergewissern Sie sich, dass Sie mit dem richtigen Tool arbeiten.
 
@@ -101,6 +104,7 @@ Die in den Angaben verlangten Tests stellen ein Minimum dar. Sie können auch we
 
 ----------------------------
 4. Hinweise zur Präsentation
+----------------------------
 
 Sie sollen Ihre Arbeit in einem ca. 10-15-minütigen Vortrag präsentieren. Halten Sie den Vortrag in erster Linie für Ihre Kollegen und berücksichtigen Sie deren Wissensstand. Ihr Vortrag soll die Aufgabenstellung darlegen, den Code präsentieren und die Ergebnisse der Tests und/oder Simulationen beschreiben. Sie können dazu mehrere Hilfsmittel verwenden, Powerpoint-Präsentation, Spyder, Editor. Sie können Ihren Laptop verwenden oder Ihre Files auf einem USB-Stick mitbringen. Unser Rechner hat Powerpoint und Spyder installiert. Kurze Rechnungen können Sie online laufen lassen, bei längeren wird es angebracht sein, die Ergebnisse vorzubereiten.
 
