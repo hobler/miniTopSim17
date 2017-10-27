@@ -99,7 +99,7 @@ Ihre Tests sollen sowohl vom Arbeitsverzeichnis aus aufgerufen laufen (solange S
 
 Tests müssen ein assert Statement enthalten (siehe Vortragsfolien).
 
-Die in den Angaben verlangten Tests stellen ein Minimum dar. Sie können auch weitere Tests definieren. Achten Sie aber darauf, dass diese kurz (bezüglich Rechenzeit) sind.
+Wenn nichts anderes angegeben ist, besteht ein Test aus einer Simulation, die ein srf-File erzeugt. Die letzte Oberfläche soll auf "geringen Abstand" von der letzten Oberfläche des entsprechenden srf_save-Files überprüft werden. Letzteres wird durch Kopieren des srf-Files einer vorangegangenen Simulation erzeugt. Die in den Angaben verlangten Tests stellen ein Minimum dar. Sie können auch weitere Tests definieren. Achten Sie aber darauf, dass diese kurz (bezüglich Rechenzeit) sind.
 
 
 ----------------------------
