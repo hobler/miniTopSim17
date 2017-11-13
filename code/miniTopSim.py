@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
 import sys
 from surface import Surface
@@ -6,6 +6,13 @@ import advance
 
 
 def main(tend, dt):
+    """
+    Main simulation function. Calculates the progress one timestep at a time
+    until the end time has been reached.
+
+    :param tend: end time for the simulation
+    :param dt: duration of the time steps
+    """
     surface = Surface()
 
     t = 0.0
