@@ -72,7 +72,7 @@ class Surface:
         :param time: current timestep of the surface simulation
         """
         filename = '{}.srf'.format(filename)
-        header = 'surface: {}, {}, x-positions y-positions\n'.format(time, len(self.x))
+        header = 'surface: {} {} x-positions y-positions\n'.format(time, len(self.x))
         with open(filename, 'a') as fp:
             fp.write(header)
             for x, y in zip(self.x, self.y):
