@@ -1,0 +1,49 @@
+[Setup]
+ETCHING = (True, 'ETCHING',
+    '''Flag selecting the simulation mode between etching and sputtering.
+    ''')
+
+[Initial Conditions]
+XMIN = (-50., None,
+    '''Minimum x value of the initial surface.
+    ''')
+XMAX = (50., 'XMAX > XMIN',
+    '''Maximum x value of the initial surface.
+    ''')
+DELTA_X = (1., 'DELTA_X > 0.',
+    '''Increment of x values of the initial surface.
+    ''')
+INITIAL_SURFACE_TYPE = ('Cosine', 'INITIAL_SURFACE_TYPE in ("Cosine",)',
+    '''Initial surface type.
+    ''')
+FUN_XMIN = (-25., 'FUN_XMIN >= XMIN',
+    '''Lower boundary of initial surface function.
+    For XMIN < x < FUN_XMIN the surface function is assumed to be constant
+    and equal to its value at x = FUN_XMIN.
+    ''')
+FUN_XMAX = (-25., 'FUN_XMAX <= XMAX and FUN_XMAX > FUN_XMIN',
+    '''Lower boundary of initial surface function.
+    For XMIN < x < FUN_XMIN the surface function is assumed to be constant
+    and equal to its value at x = FUN_XMIN.
+    ''')
+
+[Numerics]
+TIME_STEP = (1., 'TIME_STEP > 0.',
+    '''Width of the time step.
+    ''')
+
+[Beam]
+TOTAL_TIME = (float, 'TOTAL_TIME > 0.',
+    '''Total beam time = total simulation time.
+    ''')
+
+[Physics]
+ETCH_RATE = (1., None,
+    '''Etch rate = surface velocity if ETCHING==True.
+    ''')
+
+[Output]
+PLOT_SURFACE = (True, None,
+    '''Flag indicating that the plot function shall be called at the end
+    of the simulation.
+    ''')
