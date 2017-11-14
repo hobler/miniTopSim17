@@ -1,0 +1,1 @@
+{'ETCHING': True, 'XMIN': -50.0, 'XMAX': 50.0, 'DELTA_X': 1.0, 'INITIAL_SURFACE_TYPE': 'Cosine', 'FUN_XMIN': -25.0, 'FUN_XMAX': -25.0, 'TIME_STEP': 1.0, 'TOTAL_TIME': <class 'float'>, 'ETCH_RATE': 1.0, 'PLOT_SURFACE': True}
