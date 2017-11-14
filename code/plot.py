@@ -11,17 +11,6 @@ import sys
  
 def plot(fname):  
     
-    class Variablen:
-        def __init__(self, fname):
-            self.fig, self.ax = plt.subplots()
-            self.potenz = 0
-            self.a = False
-            self.b = False
-            self.d = False
-            self.pltindex = 0
-            self.filename = fname
-            self.values, self.narray, self.surfaces = read(self.filename)
-                  
     def read(filename):
         '''reads the file with the given name and returns a 2-dim numpy array with the x- and y- points,
            a nparray with the number of points for every surface and the number of surfaces from the file'''
@@ -49,42 +38,43 @@ def plot(fname):
         return (np.loadtxt(filename,comments='surface:')).astype(np.float), narray, surfaces
     
     
-    def get_vals():
+    def get_values():
         '''reads and returns the xvals and yvals for the current surface'''
         
         start = 0
-        for i in range(x.pltindex):
-            start = start+x.narray[i]
-        end = start + x.narray[x.pltindex]
-        xvals = x.values[start:end, 0]
-        yvals = x.values[start:end, 1]
+        for i in range(pltindex):
+            start = start+narray[i]
+        end = start + narray[pltindex]
+        xvalues = values[start:end, 0]
+        yvalues = values[start:end, 1]
        
-        return xvals, yvals
+        return xvalues, yvalues
     
     
-    def draw(xvals, yvals, d):
+    def draw():
         '''checks the parameters for the pressed buttons and draws the plot accordingly'''
         
-        if d:
-            while x.ax.lines:
-                x.ax.lines[0].remove()
-                
-        if x.b == False:
-            x.ax.relim()
-            x.ax.autoscale()
+        xvalues, yvalues = get_values()
+
+        if delete:
+            while ax.lines:
+                ax.lines[0].remove()
+
+        if boundaries == False:
+            ax.relim()
+            ax.autoscale()
         else:
-            x.ax.set_xlim(auto=False)
-            x.ax.set_ylim(auto=False)
+            ax.set_xlim(auto=False)
+            ax.set_ylim(auto=False)
         
-        if x.a == False:
-            x.ax.set_aspect('auto')
+        if aspectratio == False:
+            ax.set_aspect('auto')
         else:
-            x.ax.set_aspect('equal')
+            ax.set_aspect('equal')
             
-        x.ax.plot(xvals, yvals)
+        ax.plot(xvalues, yvalues)
         plt.draw()
         
-    
     
     def onbutton(event):
         '''Handles the events that happen when a button is pressed
@@ -97,89 +87,99 @@ def plot(fname):
            's' saves plot to 'filename'.png
            'b' changes boundary mode (fixed or auto)
            'q' quit '''
+
+        global potenz
+        global aspectratio
+        global boundaries
+        global delete
+        global pltindex
+        global surfaces
+        global narray
+        global values
+
       
         if event.key == 'd':
-            x.d = not x.d
-            xvals, yvals = get_vals()
-            draw(xvals, yvals, x.d)
+            delete = not delete
+            draw()
             
         if event.key == ' ':
-            x.pltindex = x.pltindex+2**x.potenz
-            if x.pltindex >= x.surfaces:
-                x.pltindex = 0
-            xvals, yvals = get_vals()
-            draw(xvals, yvals, x.d)
+            pltindex = pltindex+2**potenz
+            if pltindex >= surfaces:
+                pltindex = 0
+            draw()
 
         if event.key == 'l':
-            #x.pltindex = x.pltindex-2**x.potenz
-            #if x.pltindex < 0:
-                #x.pltindex = 0
-            x.pltindex = x.surfaces-1   
-            xvals, yvals = get_vals()
-            draw(xvals, yvals, x.d)
+            pltindex = surfaces-1
+            draw()
             
         if event.key == 'r':
-            x.pltindex=0
-            xvals, yvals = get_vals()
-            draw(xvals, yvals, True)
+            pltindex=0
+            if delete == False:
+                delete = True
+                draw()
+                delete = False
+            else:
+                draw()
             
         if event.key == 'a':
-            x.a = not x.a
-            xvals, yvals = get_vals()
-            draw(xvals, yvals, x.d)
+            aspectratio = not aspectratio
+            draw()
     
         if event.key == 's':
-            plt.savefig(x.filename[:x.filename.index('.')]+'.png')       
+            plt.savefig(fname[:fname.index('.')]+'.png')
         
         if event.key == 'b':
-            x.b = not x.b
-            xvals, yvals = get_vals()
-            draw(xvals, yvals, x.d)
+            boundaries = not boundaries
+            draw()
         
         if event.key == 'q':
             plt.close()
         
         if event.key == '0':
-            x.potenz = 0
+            potenz = 0
         
         if event.key == '1':
-            x.potenz = 1
+            potenz = 1
             
         if event.key == '2':
-            x.potenz = 2
+            potenz = 2
             
         if event.key == '3':
-            x.potenz = 3
+            potenz = 3
             
         if event.key == '4':
-            x.potenz = 4
+            potenz = 4
             
         if event.key == '5':
-            x.potenz = 5
+            potenz = 5
             
         if event.key == '6':
-            x.potenz = 6
+            potenz = 6
             
         if event.key == '7':
-            x.potenz = 7
+            potenz = 7
         
         if event.key == '8':
-            x.potenz = 8
+            potenz = 8
             
         if event.key == '9':
-            x.potenz = 9
+            potenz = 9
 
+    globals()['potenz'] = 0
+    globals()['aspectratio'] = False
+    globals()['boundaries'] = False
+    globals()['delete'] = False
+    globals()['pltindex'] = 0
+    globals()['values'], globals()['narray'], globals()['surfaces'] = read(fname)
 
+    fig, ax = plt.subplots()
 
     plt.rcParams['keymap.xscale'] = ''
     plt.rcParams['keymap.yscale'] = ''
     plt.rcParams['keymap.save'] = 'ctrl+s'  #frees the shortcuts for the needed buttons
 
-
-    x = Variablen(fname)
-    xvals, yvals = get_vals()
-    draw(xvals, yvals, x.d)
-    x.fig.canvas.mpl_connect('key_press_event', onbutton)
+    draw()
+    fig.canvas.mpl_connect('key_press_event', onbutton)
     plt.show()
  
 if __name__ == '__main__':
