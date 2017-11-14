@@ -27,10 +27,8 @@ def plot(fname):
            a nparray with the number of points for every surface and the number of surfaces from the file'''
       
         npoints = 0     #number of points from the surface
-        index = 0
         surfaces = 0    #number of surfaces
         nlist = []      #list with the number of points for every surface
-        i=0
         
         try: 
             file = open(filename)
@@ -38,28 +36,18 @@ def plot(fname):
             print("File " + filename + " not found\nPress Enter to continue...")
             input()            
             sys.exit()
-            
-        content = file.read()
-        surfaces = content.count('surface: ')
         
-        for i in range(surfaces):
-            npoints, index = get_surface_index(content, index)
-            nlist.append(npoints)
-       
+        for line in file:
+            if 'surface' in line:
+                    s_line = line.split()
+                    npoints =int(s_line[s_line.index('surface:')+2])
+                    nlist.append(npoints)
+
+        surfaces = len(nlist)
         narray = np.array(nlist)    #numpy array with the number of points for every surface
         
         return (np.loadtxt(filename,comments='surface:')).astype(np.float), narray, surfaces
     
-    
-    def get_surface_index(content, index):
-        '''returns next values for time and npoints and a index afterwards from the content file '''
-        
-        index = content.index('surface: ', index)
-        string = content[index+13:content.index(' ', index+14)] #split
-        npoints = int(string)
-        
-        return npoints, index+14
-       
     
     def get_vals():
         '''reads and returns the xvals and yvals for the current surface'''
