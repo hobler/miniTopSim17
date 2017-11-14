@@ -3,9 +3,11 @@
 import sys
 from surface import Surface
 import advance
+import parameters as par
+import os
 
 
-def main(tend, dt):
+def start_simulation(tend, dt):
     """
     Main simulation function. Calculates the progress one timestep at a time
     until the end time has been reached.
@@ -28,7 +30,11 @@ def main(tend, dt):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print("Not enough arguments. \n Usage: {} endtime timesteps".format(sys.argv[0]))
+    try:
+        in_file = sys.argv[1]
+        par.set_Parameters(os.path.abspath(in_file))
+        start_simulation(float(par.TOTAL_TIME), float(par.TIME_STEP))
+    except IndexError:
+        print("Not enough arguments. \n Usage: {} file.cfg\n".format(sys.argv[0]))
         exit(0)
-    main(float(sys.argv[1]), float(sys.argv[2]))
+

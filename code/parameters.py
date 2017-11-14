@@ -46,8 +46,9 @@ def  set_Parameters(configfile):
     FileNotFoundError(): Wenn der Dateiname vom configfile im Arbeitsverzeichnis nicht gefunden wurde
     InvalidParametersError(): Wenn einer der checks nicht bestanden wurde
     """
-    
-    database_dict = __read_configfile('parameters.db')
+
+    db_file = os.path.join(os.path.dirname(__file__), 'parameters.db')
+    database_dict = __read_configfile(db_file)
     config_dict = __read_configfile(configfile) 
         
     for key, value in database_dict.items():
@@ -79,7 +80,7 @@ def __read_configfile(configfile):
                                   
     Falls die Datei nicht gefunden wurde wird ein "FileNotFoundError" ausgegeben
     """
-    
+
     if(os.path.exists(configfile) == False):
        raise FileNotFoundError(str(configfile) + ' doesnt exist in working directory!')
     
