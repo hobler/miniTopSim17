@@ -4,6 +4,7 @@ import sys
 from surface import Surface
 import advance
 import parameters as par
+from parameters import InvalidParametersError
 import os
 import plot as plt
 
@@ -40,5 +41,10 @@ if __name__ == '__main__':
         start_simulation(float(par.TOTAL_TIME), float(par.TIME_STEP), par.PLOT_SURFACE)
     except IndexError:
         print("Not enough arguments. \n Usage: {} file.cfg\n".format(sys.argv[0]))
+        exit(0)
+    except FileNotFoundError as e:
+        print(e)
+        exit(0)
+    except InvalidParametersError:
         exit(0)
 
