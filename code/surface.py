@@ -9,7 +9,6 @@ Simulation for etching or sputtering of surfaces
 import sys
 from init_surface import init_surface
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 class Surface:
@@ -49,20 +48,6 @@ class Surface:
         dy = y[2:] - y[:-2]
         length = np.linalg.norm([dx, dy], axis=0)
         return dy / length, -dx / length
-
-    def plot(self, filename):
-        """
-        Display or store the plot of the surface
-
-        :param filename: name of the png file to store the surface plot
-        """
-        fig = plt.figure()
-        filename = '{}.png'.format(filename)
-        plt.plot(self.x_start, self.y_start, 'b+-', label='Start')
-        plt.plot(self.x, self.y, 'r+-', label='End')
-        plt.legend(loc=0)
-        fig.savefig(filename, dpi=300)
-        #plt.show()
 
     def write(self, filename, time):
         """
