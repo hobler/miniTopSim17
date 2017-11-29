@@ -14,7 +14,6 @@ from parameters import InvalidParametersError
 import plot as pt
 #import numpy as np
 
-
 def simulation(in_file):
     """
     Main simulation function. Calculates the progress one timestep at a time

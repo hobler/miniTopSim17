@@ -1,6 +1,7 @@
 [Setup]
-ETCHING = (True, 'ETCHING',
+ETCHING = (False, None,
     '''Flag selecting the simulation mode between etching and sputtering.
+    Default: False=sputtering
     ''')
 
 [Initial Conditions]
@@ -37,9 +38,45 @@ TOTAL_TIME = (float, 'TOTAL_TIME > 0.',
     '''Total beam time = total simulation time.
     ''')
 
+BEAM_CURRENT_DENSITY = (0.001, 'BEAM_CURRENT_DENSITY > 0.',
+   '''Beam Current Density J [A/cm^2].
+   The beam flux density F_beam can be calculated based on J with F_beam=J/e. With e as the elementary charge.
+   ''')
+
+
 [Physics]
-ETCH_RATE = (1., None,
-    '''Etch rate = surface velocity if ETCHING==True.
+ETCH_RATE = (1., 'not ETCHING or ETCH_RATE>0.',
+    '''Etch rate = surface velocity [nm/s] if ETCHING==True.
+    ''')
+
+SPUTTER_YIELD_0 = (0.11 , 'SPUTTER_YIELD_0>0.',
+    ''' SPUTTER_YIELD_0 = Y_0, needed to calculate the Sputter Yield with the Yamamura formula.
+    Y=Y_0*cos(theta)^-f * exp(b*(1-1/cos(theta)))
+    Default: Y0=0.11
+    ''')
+
+SPUTTER_YIELD_F = (1.9 , 'SPUTTER_YIELD_F>0.',
+    ''' SPUTTER_YIELD_F = f, needed to calculate the Sputter Yield with the Yamamura formula.
+    Y=Y_0*cos(theta)^-f * exp(b*(1-1/cos(theta)))
+    Default: f=1.9
+    ''')
+
+SPUTTER_YIELD_B = (0.19 , 'SPUTTER_YIELD_B>0.',
+    ''' SPUTTER_YIELD_B = b, needed to calculate the Sputter Yield with the Yamamura formula.
+    Y=Y_0*cos(theta)^-f * exp(b*(1-1/cos(theta)))
+    Default: He->Au, b = 38.4keV
+    ''')
+
+SPUTTER_YIELD_FILE = ('' , None,
+    ''' File that holds the Sputter-Yield-Table Y(theta). Has to be in /miniTopSim/tables
+    If empty (Default), Sputter Yield will be calculated with the Yamamura formula.
+    If set, values will be linear interpolated based on the provided data.
+    ''')
+
+DENSITY = (5e22 , 'DENSITY>0.',
+    ''' DENSITY=Atom density N [Atoms/cm^3].
+    Needed to calculate the normal velocity v_n=F_sput/N [nm/s] with F_sput=Sputter flux density.
+    Default: 5e22 [Atoms/cm^3]
     ''')
 
 [Output]
