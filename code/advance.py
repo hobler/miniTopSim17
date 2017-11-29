@@ -24,7 +24,7 @@ def advance(surface, dtime):
     surface.x += dtime * x_normals * vel
     surface.y += dtime * y_normals * vel
 
-    #surface.deloop()
+    surface.deloop()
 
 def get_velocities(surface,dtime):
     """
