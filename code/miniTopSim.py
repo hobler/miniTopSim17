@@ -8,7 +8,6 @@ import parameters as par
 from parameters import InvalidParametersError
 import plot as pt
 
-
 def simulation():
     """
     Main simulation function. Calculates the progress one timestep at a time
@@ -25,7 +24,6 @@ def simulation():
     except OSError:
         pass
 
-    init_sputtering()
     surface.write(out_file, t)
     while t < par.TOTAL_TIME:
         # Retrieve next possible timestep

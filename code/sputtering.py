@@ -6,6 +6,7 @@ import sputtering as sp
 import os
 from scipy import interpolate
 
+get_sputter_yield=None
 
 class Sputter_yield_Yamamura:
     """
@@ -103,7 +104,7 @@ def init_sputtering():
        Inits Sputter_yield_Yamamura based on the Yamamura formular if the parameter SPUTTER_YIELD_FILE=''
        Inits Sputter_yield_table  based on a table lookup and 1d interpolation if the parameter SPUTTER_YIELD_FILE !=''
     """
-    global get_sputter_yield
+    #global get_sputter_yield
     file=par.SPUTTER_YIELD_FILE
 
     if file=='':
@@ -113,11 +114,11 @@ def init_sputtering():
         b =  par.SPUTTER_YIELD_B
 
         yamamura=Sputter_yield_Yamamura(y0,f,b)
-        get_sputter_yield=yamamura
+        sp.get_sputter_yield=yamamura
 
     else:
         table=Sputter_yield_table(file)
-        get_sputter_yield=table
+        sp.get_sputter_yield=table
 
 
 def sputter_yield(theta):
@@ -128,8 +129,8 @@ def sputter_yield(theta):
     :return:Sputter_Yield(theta).
     """
 
-    #if get_sputter_yield is None:
-    #    init_sputtering()
+    if sp.get_sputter_yield is None:
+        init_sputtering()
 
     return sp.get_sputter_yield(theta)
 
