@@ -12,6 +12,7 @@ import advance
 import parameters as par
 from parameters import InvalidParametersError
 import plot as pt
+from sputtering import init_sputtering
 #import numpy as np
 
 def simulation(in_file):
@@ -20,6 +21,7 @@ def simulation(in_file):
     until the end time has been reached.
     """        
     par.set_Parameters(os.path.abspath(in_file))
+    init_sputtering()
     surface = Surface(par.DELTA_X)#set x steps to step size of cfg file
     t = 0.0
     #splitting filename at position of the last point
