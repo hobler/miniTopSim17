@@ -12,8 +12,10 @@ import sys
 def plot(fname):  
     
     def read(filename):
-        '''reads the file with the given name and returns a 2-dim numpy array with the x- and y- points,
-           a nparray with the number of points for every surface and the number of surfaces from the file'''
+        """
+        reads the file with the given name and returns a 2-dim numpy array with the x- and y- points,
+        a nparray with the number of points for every surface and the number of surfaces from the file
+        """
       
         npoints = 0     #number of points from the surface
         surfaces = 0    #number of surfaces

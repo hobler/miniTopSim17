@@ -14,14 +14,18 @@ def simulation():
     Main simulation function. Calculates the progress one timestep at a time
     until the end time has been reached.
 
-    :param tend: end time for the simulation
-    :param dt: duration of the time steps
     """
     surface = Surface()
 
     t = 0.0
     out_file = (sys.argv[1]).split('.')[0]
+    #remove file if it exists. Else it will be appended with the new data.
+    try:
+        os.remove('{}.srf'.format(out_file))
+    except OSError:
+        pass
 
+    init_sputtering()
     surface.write(out_file, t)
     while t < par.TOTAL_TIME:
         # Retrieve next possible timestep
