@@ -23,7 +23,8 @@ def advance(surface, dtime):
 
     surface.x += dtime * x_normals * vel
     surface.y += dtime * y_normals * vel
-    #surface.deloop()
+    surface.deloop()
+
 
 def get_velocities(surface,dtime):
     """
@@ -63,6 +64,7 @@ def get_velocities(surface,dtime):
         vel=F_sput/N * 1e7
 
     #Check if caves emerge and adapt velocities if necessary
+
 
     x_normals, y_normals = surface.normal()
     sim_surf_x=surface.x + dtime * x_normals * vel
