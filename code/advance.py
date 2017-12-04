@@ -63,33 +63,32 @@ def get_velocities(surface,dtime):
         #Parameters are given in cm, *1e7 to get nm/s
         vel=F_sput/N * 1e7
 
-    #Check if caves emerge and adapt velocities if necessary
+        #Check if caves emerge and adapt velocities if necessary
 
+        x_normals, y_normals = surface.normal()
+        sim_surf_x=surface.x + dtime * x_normals * vel
+        sim_surf_y=surface.y + dtime * y_normals * vel
 
-    x_normals, y_normals = surface.normal()
-    sim_surf_x=surface.x + dtime * x_normals * vel
-    sim_surf_y=surface.y + dtime * y_normals * vel
+        xmax = sim_surf_x[0]
+        xmin = sim_surf_x[-1]
 
-    xmax = sim_surf_x[0]
-    xmin = sim_surf_x[-1]
+        for it_f in range(0, sim_surf_x.size - 2):
+            dy = sim_surf_y[it_f + 1] - sim_surf_y[it_f]
+            if dy < 0:
+                if sim_surf_x[it_f] < xmax:
+                    vel[it_f] = (xmax - surface.x[it_f]) / (dtime * x_normals[it_f])
 
-    for it_f in range(0, sim_surf_x.size - 2):
-        dy = sim_surf_y[it_f + 1] - sim_surf_y[it_f]
-        if dy < 0:
-            if sim_surf_x[it_f] < xmax:
-                vel[it_f] = (xmax - surface.x[it_f]) / (dtime * x_normals[it_f])
+                else:
+                    xmax = sim_surf_x[it_f]
 
-            else:
-                xmax = sim_surf_x[it_f]
+        for it_b in range(sim_surf_x.size - 1, 0, -1):
+            dy = sim_surf_y[it_b - 1] - sim_surf_y[it_b]
+            if dy < 0:
+                if sim_surf_x[it_b] > xmin:
+                    vel[it_b] = (xmin - surface.x[it_b]) / (dtime * x_normals[it_b])
 
-    for it_b in range(sim_surf_x.size - 1, 0, -1):
-        dy = sim_surf_y[it_b - 1] - sim_surf_y[it_b]
-        if dy < 0:
-            if sim_surf_x[it_b] > xmin:
-                vel[it_b] = (xmin - surface.x[it_b]) / (dtime * x_normals[it_b])
-
-            else:
-                xmin = sim_surf_x[it_b]
+                else:
+                    xmin = sim_surf_x[it_b]
 
     return vel
 
