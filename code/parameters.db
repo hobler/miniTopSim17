@@ -14,7 +14,7 @@ XMAX = (50., 'XMAX > XMIN',
 DELTA_X = (1., 'DELTA_X > 0.',
     '''Increment of x values of the initial surface.
     ''')
-INITIAL_SURFACE_TYPE = ('Cosine', 'INITIAL_SURFACE_TYPE in ("Cosine", "DoubleCosine", "Step", "V-Shape", )',
+INITIAL_SURFACE_TYPE = ('Cosine', 'INITIAL_SURFACE_TYPE in ("Cosine", "DoubleCosine", "Step", "V-Shape", "Flat")',
     '''Initial surface type.
     ''')
 FUN_XMIN = (-25., 'FUN_XMIN >= XMIN',
@@ -22,7 +22,7 @@ FUN_XMIN = (-25., 'FUN_XMIN >= XMIN',
     For XMIN < x < FUN_XMIN the surface function is assumed to be constant
     and equal to its value at x = FUN_XMIN.
     ''')
-FUN_XMAX = (-25., 'FUN_XMAX <= XMAX and FUN_XMAX > FUN_XMIN',
+FUN_XMAX = (25., 'FUN_XMAX <= XMAX and FUN_XMAX > FUN_XMIN',
     '''Lower boundary of initial surface function.
     For XMIN < x < FUN_XMIN the surface function is assumed to be constant
     and equal to its value at x = FUN_XMIN.
@@ -52,6 +52,36 @@ BEAM_CURRENT_DENSITY = (0.001, 'BEAM_CURRENT_DENSITY > 0.',
    The beam flux density F_beam can be calculated based on J with F_beam=J/e. With e as the elementary charge.
    ''')
 
+BEAM_TYPE = ('constant', 'BEAM_TYPE in ("constant", "Gaussian", "error function")',
+    '''Type of beam to be used.
+    The Beam Type can be one of the following three types: constant, gaussion or
+    error function
+    ''')
+
+BEAM_CURRENT = (0.000000001, 'BEAM_CURRENT > 0', 
+    '''Beam current [A].
+    For BEAM Type constant, BEAM_CURRENT_DENSITY has to be used instead of
+    BEAM_CURRENT.
+    ''')
+
+SCAN_WIDTH = (1000., 'SCAN_WIDTH > 0', 
+    '''Scan width for z-Axis [nm].
+    Used for gaussian and error function beam type.
+    ''')
+
+BEAM_CENTER = (0., None, 
+    '''Beam center for gaussian and error function beam type.
+    ''')
+
+FWHM = (100., None, 
+    '''Full Width Half Maximum [nm].
+    Used for gaussian and error function beam type.
+    ''')
+
+ERF_BEAM_WIDTH = (1000., 'ERF_BEAM_WIDTH > 0', 
+    '''Beam width in x-Axis [nm]
+    Used only for error function beam type.
+    ''')
 
 [Physics]
 ETCH_RATE = (1., 'not ETCHING or ETCH_RATE>0.',

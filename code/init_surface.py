@@ -18,6 +18,11 @@ def init_surface(x):
     :param x: numpy array representing the x values
     :return: The array given the
     """
+    def flat(x):
+        tmp = np.ma.masked_outside(x, par.FUN_XMIN, par.FUN_XMAX)
+        y = tmp * 0.0
+        return y.filled(0.0)
+    
     def cosine(x):
         tmp = np.ma.masked_outside(x, par.FUN_XMIN, par.FUN_XMAX)
         y = par.FUN_PEAK_TO_PEAK * (1 + np.cos(2 * np.pi * tmp / 50))
@@ -74,6 +79,7 @@ def init_surface(x):
         return y.filled(0.0)
                 
     funcdict = {
+        'Flat': flat,
         'Cosine': cosine,
         'DoubleCosine': doubleCosine,
         'Step': step,

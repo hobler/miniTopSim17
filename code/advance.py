@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 
 import sys
+
+import numpy as np
+
 import parameters as par
 import sputtering as sp
-import numpy as np
+from beam import Beam
 #import matplotlib.pyplot as plt #For Demo/Debug ONLY Remove before commit.
 
 from scipy.constants import codata
@@ -52,9 +55,7 @@ def get_velocities(surface,dtime):
 
     else:
 
-        J = par.BEAM_CURRENT_DENSITY
         N = par.DENSITY
-        e = codata.value('elementary charge')
 
         #theta represents the angle between beam direction v_b [0,-1] and the normal vector v_n[nx,ny]
         #since v_b and v_n are normalized vectors, arccos(dot(v_b,v_n)) gives the angle between the two vectors,
@@ -64,8 +65,8 @@ def get_velocities(surface,dtime):
 
         syield=sp.sputter_yield(theta)
 
-        F_beam = J / e
-        F_sput=F_beam*syield*np.cos(theta)
+        F_beam = Beam() 
+        F_sput=F_beam(surface.x)*syield*np.cos(theta)
 
         #Parameters are given in cm, *1e7 to get nm/s
         vel=F_sput/N * 1e7
