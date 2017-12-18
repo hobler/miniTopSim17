@@ -22,22 +22,35 @@ def simulation(in_file):
     """        
     par.set_Parameters(os.path.abspath(in_file))
     init_sputtering()
-    surface = Surface(par.DELTA_X)#set x steps to step size of cfg file
-    t = 0.0
+        
     #splitting filename at position of the last point
     out_file, cfg_type = os.path.splitext(in_file)
     # if srf file exists, it has to be remove,
     # because you have to generate a new file with other possible values
     if os.path.exists(os.path.abspath('{}.srf'.format(out_file))):
         os.remove(os.path.abspath('{}.srf'.format(out_file)))
-    surface.write(out_file, t)
-    while t < par.TOTAL_TIME:
+
+    t = 0.0
+    total_time = par.TOTAL_TIME
+
+    if par.INITIAL_SURFACE_FILE != None and par.INITIAL_SURFACE_FILE != '':
+        surface = Surface(filename= os.path.join(os.path.dirname(in_file), \
+                                                 par.INITIAL_SURFACE_FILE))
+        total_time = total_time+1
+        
+    else:
+         #set x steps to step size of cfg file
+        surface = Surface(par.DELTA_X)
+    
+    while t < total_time:
+
+        surface.write(out_file, t)
         # Retrieve next possible timestep
-        delta = advance.timestep(par.TIME_STEP, t, par.TOTAL_TIME)
+        delta = advance.timestep(par.TIME_STEP, t, total_time)
         # Update surface values
         advance.advance(surface, par.TIME_STEP)
         t += delta
-        surface.write(out_file, t)
+        
     if par.PLOT_SURFACE:
         if os.path.exists(os.path.abspath('{}.srf_save'.format(out_file))):
             pt.plot(os.path.abspath('{}.srf'.format(out_file)),

@@ -14,7 +14,7 @@ XMAX = (50., 'XMAX > XMIN',
 DELTA_X = (1., 'DELTA_X > 0.',
     '''Increment of x values of the initial surface.
     ''')
-INITIAL_SURFACE_TYPE = ('Cosine', 'INITIAL_SURFACE_TYPE in ("Cosine",)',
+INITIAL_SURFACE_TYPE = ('Cosine', 'INITIAL_SURFACE_TYPE in ("Cosine", "DoubleCosine", "Step", "V-Shape", )',
     '''Initial surface type.
     ''')
 FUN_XMIN = (-25., 'FUN_XMIN >= XMIN',
@@ -27,11 +27,20 @@ FUN_XMAX = (-25., 'FUN_XMAX <= XMAX and FUN_XMAX > FUN_XMIN',
     For XMIN < x < FUN_XMIN the surface function is assumed to be constant
     and equal to its value at x = FUN_XMIN.
     ''')
+FUN_PEAK_TO_PEAK = (-50., 'FUN_PEAK_TO_PEAK <= 0.',
+	''' maximale Auslenkung der Funktion in Bezug auf y=0.
+	''')
+INITIAL_SURFACE_FILE = ('', None,
+	''' Filename des einzulesenden srf-Files.
+	''')
 
 [Numerics]
 TIME_STEP = (1., 'TIME_STEP > 0.',
     '''Width of the time step.
     ''')
+TIME_INTEGRATION = ('normal', 'TIME_INTEGRATION in ("normal", "vertical", )',
+	''' Zeitintegrationsmethode.
+	''')
 
 [Beam]
 TOTAL_TIME = (float, 'TOTAL_TIME > 0.',

@@ -4,10 +4,10 @@ import sys
 import parameters as par
 import sputtering as sp
 import numpy as np
-from scipy.ndimage.interpolation import shift
-import matplotlib.pyplot as plt #For Demo/Debug ONLY Remove before commit.
+#import matplotlib.pyplot as plt #For Demo/Debug ONLY Remove before commit.
+
 from scipy.constants import codata
-from time import sleep
+
 
 def advance(surface, dtime):
     """
@@ -20,9 +20,16 @@ def advance(surface, dtime):
     vel = get_velocities(surface, dtime)
 
     x_normals, y_normals = surface.normal()
+    
+    if par.TIME_INTEGRATION == 'vertical':
+        x_tmp = 0.
+        y_tmp = 1 / y_normals
+    else:
+        x_tmp = x_normals
+        y_tmp = y_normals
 
-    surface.x += dtime * x_normals * vel
-    surface.y += dtime * y_normals * vel
+    surface.x += dtime * x_tmp * vel
+    surface.y += dtime * y_tmp * vel
     surface.deloop()
 
 

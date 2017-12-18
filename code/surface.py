@@ -5,14 +5,18 @@ surface.py
 
 Simulation for etching or sputtering of surfaces
 @adapted: Florian Muttenthaler, 01325603 (21.11.2017)
+@adapted: Patrick Mayr, 10.12.2017
 """
 
 import sys
-from init_surface import init_surface
 import numpy as np
+import parameters as par
+
 from math import sqrt
 from statistics import mean
 from itertools import combinations as combinations
+from init_surface import init_surface
+
 
 class Surface:
     """
@@ -28,36 +32,49 @@ class Surface:
         filename: for loading a surface of a srf file
         index: index of the to load surface. If None the last surface is used
         '''
-        if filename!= None:
+        if filename != None and filename != '':
             try: 
                 file = open(filename)
             except:
                 print("File " + filename + " not found\nPress Enter to continue...")
                 input()            
                 sys.exit()
-            linenum = 0
-            lastlinenum = 0
+
             counter = 0
+            npoints = 0     # number of points from the surface
+            nSurfaces = 0
+            
             for line in file:
                 if 'surface' in line:
-                    lastlinenum = linenum
-                linenum+1
-                if index!= None:
-                    if counter == index:
-                        break
-                    else:
-                        counter+1
-            values = (np.loadtxt(filename,comments='surface:', skiprows=lastlinenum)).astype(np.float)
-            size = values.size
-            self.x = values[0:size, 0]
-            self.y = values[0:size, 1]
+
+                    s_line = line.split()
+                    npoints = int(s_line[s_line.index('surface:') + 2])
+                    nSurfaces = nSurfaces + 1
+
+            if index != None:
+                if index < nSurfaces:
+                    counter = index
+                else:
+                    counter = nSurfaces-1
+            else:
+                counter = nSurfaces-1
+                        
+            values = (np.loadtxt(filename, \
+                                 comments = 'surface:', \
+                                 skiprows = counter * npoints + counter)).astype(np.float)
+            
+            self.x = values[0:npoints, 0]
+            self.y = values[0:npoints, 1]
         else:
             if accuracy != None:
-                self.x = np.linspace(-50, 50, 101/accuracy)
-                self.y = init_surface(self.x)
+                self.x = np.linspace(par.XMIN, par.XMAX, \
+                            (par.XMAX - par.XMIN) / accuracy + 1)
             else:
-                self.x = np.linspace(-50, 50, 101)
-                self.y = init_surface(self.x)
+                self.x = np.linspace(par.XMIN, par.XMAX, \
+                            (par.XMAX - par.XMIN + 1))
+
+            self.y = init_surface(self.x)
+
         # copies for visualization
         self.y_start = np.copy(self.y)
         self.x_start = np.copy(self.x)
@@ -149,7 +166,9 @@ class Surface:
         dx = x[2:] - x[:-2]
         dy = y[2:] - y[:-2]
         length = np.linalg.norm([dx, dy], axis=0)
+
         return dy / length, -dx / length
+    
 
     def write(self, filename, time):
         """
