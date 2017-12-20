@@ -69,7 +69,7 @@ def get_velocities(surface,dtime):
         F_beam = Beam() 
         F_sput=F_beam(surface.x)*syield*np.cos(theta)
 
-         if not redep:
+        if not redep:
             #Parameters are given in cm, *1e7 to get nm/s
             vel=F_sput/N * 1e7
             

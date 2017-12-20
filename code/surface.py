@@ -269,7 +269,7 @@ class Surface:
         self.x = new_x
         self.y = new_y
 
-def viewFactor(self):
+    def viewFactor(self):
         '''
         Calculates the viewfactor nxn matrix from surface parameters.
         '''      
