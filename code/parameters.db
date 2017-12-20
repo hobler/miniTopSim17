@@ -1,4 +1,9 @@
 [Setup]
+REDEP = (False, None,
+        '''
+        Flag selecting if redeposition is considered within the simulation. 
+        Default: False = no redeposition
+        ''')
 ETCHING = (False, None,
     '''Flag selecting the simulation mode between etching and sputtering.
     Default: False=sputtering

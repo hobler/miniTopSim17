@@ -46,6 +46,7 @@ def get_velocities(surface,dtime):
     """
 
     etching=par.ETCHING
+    redep=par.REDEP
 
     if etching:
 
@@ -68,8 +69,14 @@ def get_velocities(surface,dtime):
         F_beam = Beam() 
         F_sput=F_beam(surface.x)*syield*np.cos(theta)
 
-        #Parameters are given in cm, *1e7 to get nm/s
-        vel=F_sput/N * 1e7
+         if not redep:
+            #Parameters are given in cm, *1e7 to get nm/s
+            vel=F_sput/N * 1e7
+            
+        else:
+            viewfactor = surface.viewFactor()
+            F_redep = np.dot(viewfactor, F_sput)
+            vel = 1e7 * (F_sput - F_redep) / N
 
         #Check if caves emerge and adapt velocities if necessary
 

@@ -269,6 +269,48 @@ class Surface:
         self.x = new_x
         self.y = new_y
 
+def viewFactor(self):
+        '''
+        Calculates the viewfactor nxn matrix from surface parameters.
+        '''      
+        x, y = np.zeros(self.x.size + 2), np.zeros(self.y.size + 2)
+        x[1:-1], y[1:-1] = self.x, self.y
+        x[0], y[0] = x[1], y[1]
+        x[-1], y[-1] = x[-2], y[-2]
+
+        dx, dy = np.zeros(self.x.size), np.zeros(self.y.size)
+        dx, dy = x[2:] - x[:-2], y[2:] - y[:-2]
+        length = np.linalg.norm([dx, dy], axis=0)
+       
+        dl = np.zeros_like(length)
+        for i in range(length.size):
+            if i>0:
+                dl[1:-1] = (length[i] + length[i-1]) / 2
+        dl[0] = dl[1]
+        dl[-1] = dl[-2]
+         
+        xi = np.ones(self.x.size**2).reshape(self.x.size, 
+             self.x.size)*self.x 
+        yi = np.ones_like(xi)*self.y
+        xj, yj = np.ones_like(xi)*self.x[:,np.newaxis], \
+                 np.ones_like(xi)*self.y[:,np.newaxis]
+        xij, yij = xi - xj, yi - yj
+        nx, ny = self.normal()
+        nxi, nyi = np.ones_like(xi)*nx, np.ones_like(xi)*ny
+        nxj, nyj = np.ones_like(xi)*nx[:,np.newaxis], \
+                   np.ones_like(xi)*ny[:,np.newaxis]
+        
+        cosalpha = (nxj * xij + nyj * yij) / (np.sqrt(nxj ** 2 + nyj ** 2) * \
+                    np.sqrt(xij ** 2 + yij ** 2))
+        cosbeta = (nxi * xij + nyi * yij) / (np.sqrt(nxi ** 2 + nyi ** 2) * \
+                   np.sqrt(xij ** 2 + yij ** 2))
+        deltal = np.ones_like(xi)*dl
+        distij = np.sqrt(xij ** 2 + yij ** 2)
+        
+        fij = (cosalpha*cosbeta*deltal)/(2*distij)
+        mask = (cosalpha > np.zeros_like(xi)) * (cosbeta > np.zeros_like(xi)) \
+               * (np.ones_like(xi) - np.eye(self.x.size))
+        return fij*mask
 
 if __name__ == '__main__':
     print("The file {} should be imported, not called directly.".format(sys.argv[0]))
