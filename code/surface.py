@@ -5,14 +5,18 @@ surface.py
 
 Simulation for etching or sputtering of surfaces
 @adapted: Florian Muttenthaler, 01325603 (21.11.2017)
+@adapted: Patrick Mayr, 10.12.2017
 """
 
 import sys
-from init_surface import init_surface
 import numpy as np
+import parameters as par
+
 from math import sqrt
 from statistics import mean
 from itertools import combinations as combinations
+from init_surface import init_surface
+
 
 class Surface:
     """
@@ -28,36 +32,49 @@ class Surface:
         filename: for loading a surface of a srf file
         index: index of the to load surface. If None the last surface is used
         '''
-        if filename!= None:
+        if filename != None and filename != '':
             try: 
                 file = open(filename)
             except:
                 print("File " + filename + " not found\nPress Enter to continue...")
                 input()            
                 sys.exit()
-            linenum = 0
-            lastlinenum = 0
+
             counter = 0
+            npoints = 0     # number of points from the surface
+            nSurfaces = 0
+            
             for line in file:
                 if 'surface' in line:
-                    lastlinenum = linenum
-                linenum+1
-                if index!= None:
-                    if counter == index:
-                        break
-                    else:
-                        counter+1
-            values = (np.loadtxt(filename,comments='surface:', skiprows=lastlinenum)).astype(np.float)
-            size = values.size
-            self.x = values[0:size, 0]
-            self.y = values[0:size, 1]
+
+                    s_line = line.split()
+                    npoints = int(s_line[s_line.index('surface:') + 2])
+                    nSurfaces = nSurfaces + 1
+
+            if index != None:
+                if index < nSurfaces:
+                    counter = index
+                else:
+                    counter = nSurfaces-1
+            else:
+                counter = nSurfaces-1
+                        
+            values = (np.loadtxt(filename, \
+                                 comments = 'surface:', \
+                                 skiprows = counter * npoints + counter)).astype(np.float)
+            
+            self.x = values[0:npoints, 0]
+            self.y = values[0:npoints, 1]
         else:
             if accuracy != None:
-                self.x = np.linspace(-50, 50, 101/accuracy)
-                self.y = init_surface(self.x)
+                self.x = np.linspace(par.XMIN, par.XMAX, \
+                            (par.XMAX - par.XMIN) / accuracy + 1)
             else:
-                self.x = np.linspace(-50, 50, 101)
-                self.y = init_surface(self.x)
+                self.x = np.linspace(par.XMIN, par.XMAX, \
+                            (par.XMAX - par.XMIN + 1))
+
+            self.y = init_surface(self.x)
+
         # copies for visualization
         self.y_start = np.copy(self.y)
         self.x_start = np.copy(self.x)
@@ -149,7 +166,9 @@ class Surface:
         dx = x[2:] - x[:-2]
         dy = y[2:] - y[:-2]
         length = np.linalg.norm([dx, dy], axis=0)
+
         return dy / length, -dx / length
+    
 
     def write(self, filename, time):
         """
@@ -250,6 +269,48 @@ class Surface:
         self.x = new_x
         self.y = new_y
 
+    def viewFactor(self):
+        '''
+        Calculates the viewfactor nxn matrix from surface parameters.
+        '''      
+        x, y = np.zeros(self.x.size + 2), np.zeros(self.y.size + 2)
+        x[1:-1], y[1:-1] = self.x, self.y
+        x[0], y[0] = x[1], y[1]
+        x[-1], y[-1] = x[-2], y[-2]
+
+        dx, dy = np.zeros(self.x.size), np.zeros(self.y.size)
+        dx, dy = x[2:] - x[:-2], y[2:] - y[:-2]
+        length = np.linalg.norm([dx, dy], axis=0)
+       
+        dl = np.zeros_like(length)
+        for i in range(length.size):
+            if i>0:
+                dl[1:-1] = (length[i] + length[i-1]) / 2
+        dl[0] = dl[1]
+        dl[-1] = dl[-2]
+         
+        xi = np.ones(self.x.size**2).reshape(self.x.size, 
+             self.x.size)*self.x 
+        yi = np.ones_like(xi)*self.y
+        xj, yj = np.ones_like(xi)*self.x[:,np.newaxis], \
+                 np.ones_like(xi)*self.y[:,np.newaxis]
+        xij, yij = xi - xj, yi - yj
+        nx, ny = self.normal()
+        nxi, nyi = np.ones_like(xi)*nx, np.ones_like(xi)*ny
+        nxj, nyj = np.ones_like(xi)*nx[:,np.newaxis], \
+                   np.ones_like(xi)*ny[:,np.newaxis]
+        
+        cosalpha = (nxj * xij + nyj * yij) / (np.sqrt(nxj ** 2 + nyj ** 2) * \
+                    np.sqrt(xij ** 2 + yij ** 2))
+        cosbeta = (nxi * xij + nyi * yij) / (np.sqrt(nxi ** 2 + nyi ** 2) * \
+                   np.sqrt(xij ** 2 + yij ** 2))
+        deltal = np.ones_like(xi)*dl
+        distij = np.sqrt(xij ** 2 + yij ** 2)
+        
+        fij = (cosalpha*cosbeta*deltal)/(2*distij)
+        mask = (cosalpha > np.zeros_like(xi)) * (cosbeta > np.zeros_like(xi)) \
+               * (np.ones_like(xi) - np.eye(self.x.size))
+        return fij*mask
 
 if __name__ == '__main__':
     print("The file {} should be imported, not called directly.".format(sys.argv[0]))

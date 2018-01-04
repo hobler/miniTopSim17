@@ -9,7 +9,7 @@ Created on Thu Nov  9 15:43:47 2017
 import matplotlib.pyplot as plt
 import numpy as np
 import sys 
- 
+
 def plot(fname, fname2 = None):  
     '''
     plotting from either one, or two srf files

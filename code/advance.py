@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
 
 import sys
+
+import numpy as np
+
 import parameters as par
 import sputtering as sp
-import numpy as np
-from scipy.ndimage.interpolation import shift
-import matplotlib.pyplot as plt #For Demo/Debug ONLY Remove before commit.
+from beam import Beam
+#import matplotlib.pyplot as plt #For Demo/Debug ONLY Remove before commit.
+
 from scipy.constants import codata
-from time import sleep
+
 
 def advance(surface, dtime):
     """
@@ -20,9 +23,16 @@ def advance(surface, dtime):
     vel = get_velocities(surface, dtime)
 
     x_normals, y_normals = surface.normal()
+    
+    if par.TIME_INTEGRATION == 'vertical':
+        x_tmp = 0.
+        y_tmp = 1 / y_normals
+    else:
+        x_tmp = x_normals
+        y_tmp = y_normals
 
-    surface.x += dtime * x_normals * vel
-    surface.y += dtime * y_normals * vel
+    surface.x += dtime * x_tmp * vel
+    surface.y += dtime * y_tmp * vel
     surface.deloop()
 
 
@@ -36,6 +46,7 @@ def get_velocities(surface,dtime):
     """
 
     etching=par.ETCHING
+    redep=par.REDEP
 
     if etching:
 
@@ -45,9 +56,7 @@ def get_velocities(surface,dtime):
 
     else:
 
-        J = par.BEAM_CURRENT_DENSITY
         N = par.DENSITY
-        e = codata.value('elementary charge')
 
         #theta represents the angle between beam direction v_b [0,-1] and the normal vector v_n[nx,ny]
         #since v_b and v_n are normalized vectors, arccos(dot(v_b,v_n)) gives the angle between the two vectors,
@@ -57,11 +66,17 @@ def get_velocities(surface,dtime):
 
         syield=sp.sputter_yield(theta)
 
-        F_beam = J / e
-        F_sput=F_beam*syield*np.cos(theta)
+        F_beam = Beam() 
+        F_sput=F_beam(surface.x)*syield*np.cos(theta)
 
-        #Parameters are given in cm, *1e7 to get nm/s
-        vel=F_sput/N * 1e7
+        if not redep:
+            #Parameters are given in cm, *1e7 to get nm/s
+            vel=F_sput/N * 1e7
+            
+        else:
+            viewfactor = surface.viewFactor()
+            F_redep = np.dot(viewfactor, F_sput)
+            vel = 1e7 * (F_sput - F_redep) / N
 
         #Check if caves emerge and adapt velocities if necessary
 
