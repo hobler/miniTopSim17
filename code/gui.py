@@ -18,6 +18,7 @@ class ConfigGUI(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("miniTopSim Config GUI")
+        # self.setMinimumWidth(450)
 
         buttonPanel = QHBoxLayout()
         btnOK = QPushButton("OK", self)
@@ -28,34 +29,35 @@ class ConfigGUI(QWidget):
         btnCancel.clicked.connect(self.close)
         buttonPanel.addWidget(btnOK)
         buttonPanel.addWidget(btnCancel)
+        self.sections = list()
 
         layout = QVBoxLayout()
-        self.section = Section()
-        layout.addLayout(self.section)
+        self.tabs = QTabWidget()
+        layout.addWidget(self.tabs)
         layout.addLayout(buttonPanel)
         self.setLayout(layout)
 
-    def setSection(self, name):
+    def addSection(self, section):
         """
         Sets a Section and returns it
-        :rtype: Section
-        :param name: String
+        :param section: Section
         """
-        self.section.name = name
-        return self.section
+        self.sections.append(section)
+        self.tabs.addTab(section, section.name)
 
     def checkParameters(self):
         """
         Checks whether all parameters are valid
         :return: bool
         """
-        for param in self.section.parameters:
-            if not param.isValid():
-                QMessageBox.critical(self, "Validation Error",
-                                     "{0}/{1} is not valid\nViolates: \"{2}\"".format(param.section, param.name,
-                                                                                      param.query),
-                                     QMessageBox.Ok, QMessageBox.Ok)
-                return False
+        for section in self.sections:
+            for param in section.parameters:
+                if not param.isValid():
+                    QMessageBox.critical(self, "Validation Error",
+                                         "{0}/{1} is not valid\nViolates: \"{2}\"".format(param.section, param.name,
+                                                                                          param.query),
+                                         QMessageBox.Ok, QMessageBox.Ok)
+                    return False
         return True
 
     def saveConfiguration(self, fileName=os.path.join(os.getcwd(), 'beispiel.cfg')):
@@ -67,14 +69,15 @@ class ConfigGUI(QWidget):
             os.remove(fileName)
         db_write = cp.ConfigParser()
         # db_write.read(fileName)
-        db_write.add_section(self.section.name)
-        for param in self.section.parameters:
-            value = globals()[param.name]
-            if type(value) == str:
-                value = "\'{}\'".format(value)
-            else:
-                value = str(value)
-            db_write.set(self.section.name, param.name, value)
+        for section in self.sections:
+            db_write.add_section(section.name)
+            for param in section.parameters:
+                value = globals()[param.name]
+                if type(value) == str:
+                    value = "\'{}\'".format(value)
+                else:
+                    value = str(value)
+                db_write.set(section.name, param.name, value)
         file = open(fileName, 'w')
         db_write.write(file)
         file.close()
@@ -88,15 +91,15 @@ class ConfigGUI(QWidget):
             self.close()
 
 
-class Section(QVBoxLayout):
+class Section(QWidget):
     """
     Class Holding the Parameters for a Section
     """
 
-    def __init__(self, name=""):
+    def __init__(self, name):
         super(Section, self).__init__()
         self.grid = QGridLayout()
-        self.addLayout(self.grid)
+        self.setLayout(self.grid)
         self.parameters = list()
         self.name = name
 
@@ -185,7 +188,7 @@ class Parameter:
                 return True
 
 
-def loadSectionGui(section):
+def loadSectionGui(section=None):
     """
     Executes Gui for a DB-Section
     :rtype: ConfigGUI
@@ -194,18 +197,26 @@ def loadSectionGui(section):
     db_file = os.path.join(os.path.dirname(__file__), 'parameters.db')
     db = cp.ConfigParser()
     db.read(db_file)
-    if section not in db.sections():
-        print("Unknown Section\nAvailable are:\n\t", end='')
-        print(db.sections())
-        exit(-1)
+    sections = list()
+    if section is None:
+        sections = db.sections()
+    else:
+        if section not in db.sections():
+            print("Unknown Section\nAvailable are:\n\t", end='')
+            print(db.sections())
+            exit(-1)
+        else:
+            sections.append(section)
 
-    configgui = ConfigGUI()
+    config_gui = ConfigGUI()
 
-    gs = configgui.setSection(section)
-    for option in db.options(section):
-        gs.addParameter(Parameter(section, option.upper(), *eval(db.get(section, option))))
-        configgui.show()
-    return configgui
+    for section in sections:
+        gui_section = Section(section)
+        for option in db.options(section):
+            gui_section.addParameter(Parameter(section, option.upper(), *eval(db.get(section, option))))
+        config_gui.addSection(gui_section)
+    config_gui.show()
+    return config_gui
 
 
 if __name__ == '__main__':
@@ -213,8 +224,11 @@ if __name__ == '__main__':
         arg_section = sys.argv[1]
         print("Using Section: " + arg_section)
         app = QApplication(sys.argv)
-        gui = loadSectionGui(arg_section)
+        if arg_section == "all":
+            gui = loadSectionGui()
+        else:
+            gui = loadSectionGui(arg_section)
         sys.exit(app.exec_())
     else:
-        print("No Section Provided\nUsage:\n\tpython3 <path-to-code>gui.py <section- name>")
+        print("No Section Provided\nUsage:\n\tpython3 <path-to-code>gui.py <all / section- name>")
         exit(-1)
