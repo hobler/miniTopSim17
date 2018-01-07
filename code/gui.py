@@ -30,7 +30,7 @@ class ConfigGUI(QWidget):
         buttonPanel.addWidget(btnCancel)
 
         layout = QVBoxLayout()
-        self.section = SectionGrid()
+        self.section = Section()
         layout.addLayout(self.section)
         layout.addLayout(buttonPanel)
         self.setLayout(layout)
@@ -38,21 +38,23 @@ class ConfigGUI(QWidget):
     def setSection(self, name):
         """
         Sets a Section and returns it
-        :rtype: SectionGrid
+        :rtype: Section
         :param name: String
         """
         self.section.name = name
         return self.section
 
-    def checkParamters(self):
+    def checkParameters(self):
         """
         Checks whether all parameters are valid
         :return: bool
         """
         for param in self.section.parameters:
             if not param.isValid():
-                QMessageBox.critical(self, "Validation Error", "{0}/{1} is not valid\nViolates: \"{2}\"".format(param.section,param.name,param.query), QMessageBox.Ok,
-                                     QMessageBox.Ok)
+                QMessageBox.critical(self, "Validation Error",
+                                     "{0}/{1} is not valid\nViolates: \"{2}\"".format(param.section, param.name,
+                                                                                      param.query),
+                                     QMessageBox.Ok, QMessageBox.Ok)
                 return False
         return True
 
@@ -81,18 +83,18 @@ class ConfigGUI(QWidget):
         """
         Event for OK button click
         """
-        if self.checkParamters():
+        if self.checkParameters():
             self.saveConfiguration()
             self.close()
 
 
-class SectionGrid(QVBoxLayout):
+class Section(QVBoxLayout):
     """
     Class Holding the Parameters for a Section
     """
 
     def __init__(self, name=""):
-        super(SectionGrid, self).__init__()
+        super(Section, self).__init__()
         self.grid = QGridLayout()
         self.addLayout(self.grid)
         self.parameters = list()
@@ -103,33 +105,9 @@ class SectionGrid(QVBoxLayout):
         Adds a Parameter to the Grid
         :type param: Parameter
         """
-        label = QLabel(param.name)
-        if param.type == bool:
-            inp = QCheckBox()
-            inp.setChecked(param.default)
-            # noinspection PyUnresolvedReferences
-            inp.stateChanged.connect(lambda: param.isValid(inp))
-        elif param.type == float:
-            inp = QLineEdit(str(param.default))
-            inp.setValidator(QDoubleValidator())
-            # noinspection PyUnresolvedReferences
-            inp.textChanged.connect(lambda: param.isValid(inp))
-        elif param.type == str:
-            inp = QLineEdit(str(param.default))
-            # noinspection PyUnresolvedReferences
-            inp.textChanged.connect(lambda: param.isValid(inp))
-        else:
-            inp = None
-            print("UNKNOWN PARAMETER TYPE!!!")
-
-        if param.comment is not None:
-            inp.setToolTip(param.comment)
-        inp.setMinimumWidth(100)
-        param.gui_element = inp
-        param.isValid(inp)
-        nextrow = self.grid.rowCount()
-        self.grid.addWidget(label, nextrow, 0, )
-        self.grid.addWidget(inp, nextrow, 1)
+        next_row = self.grid.rowCount()
+        self.grid.addWidget(param.gui_label, next_row, 0, )
+        self.grid.addWidget(param.gui_element, next_row, 1)
         self.parameters.append(param)
 
 
@@ -152,17 +130,38 @@ class Parameter:
             self.default = default
         globals()[self.name] = self.default
 
-    def isValid(self, gui_element=None):
+        # Create GUI Element
+        self.gui_label = QLabel(self.name)
+        if self.type == bool:
+            gui_element = QCheckBox()
+            gui_element.setChecked(self.default)
+            # noinspection PyUnresolvedReferences
+            gui_element.stateChanged.connect(lambda: self.isValid())
+        elif self.type == float:
+            gui_element = QLineEdit(str(self.default))
+            gui_element.setValidator(QDoubleValidator())
+            # noinspection PyUnresolvedReferences
+            gui_element.textChanged.connect(lambda: self.isValid())
+        elif self.type == str:
+            gui_element = QLineEdit(str(self.default))
+            # noinspection PyUnresolvedReferences
+            gui_element.textChanged.connect(lambda: self.isValid())
+        else:
+            gui_element = None
+            print("UNKNOWN PARAMETER TYPE!!!")
+
+        if self.comment is not None:
+            gui_element.setToolTip(self.comment)
+        gui_element.setMinimumWidth(100)
+        self.gui_element = gui_element
+        self.isValid()
+
+    def isValid(self):
         """
         Checks if entered Value is valid
-        :type gui_element: QWidget
+        :rtype: bool
         """
-        if gui_element is None:
-            if self.gui_element is not None:
-                gui_element = self.gui_element
-            else:
-                return False
-
+        gui_element = self.gui_element
         if self.type == str:
             globals()[self.name] = gui_element.text()
         elif self.type is float:
