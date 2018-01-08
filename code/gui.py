@@ -109,7 +109,7 @@ class Section(QWidget):
         :type param: Parameter
         """
         next_row = self.grid.rowCount()
-        self.grid.addWidget(param.gui_label, next_row, 0, )
+        self.grid.addWidget(param.gui_label, next_row, 0 )
         self.grid.addWidget(param.gui_element, next_row, 1)
         self.parameters.append(param)
 
@@ -129,8 +129,12 @@ class Parameter:
             self.type = default
             self.default = default()
         else:
-            self.type = type(default)
             self.default = default
+            if query is not None and ' in ' in query:
+                self.type = list
+                self.items = eval(query.split(" in ")[1].strip())
+            else:
+                self.type = type(default)
         globals()[self.name] = self.default
 
         # Create GUI Element
@@ -149,6 +153,11 @@ class Parameter:
             gui_element = QLineEdit(str(self.default))
             # noinspection PyUnresolvedReferences
             gui_element.textChanged.connect(lambda: self.isValid())
+        elif self.type == list:
+            gui_element = QComboBox()
+            gui_element.addItems(self.items)
+            # noinspection PyUnresolvedReferences
+            gui_element.currentIndexChanged.connect(lambda: self.isValid())
         else:
             gui_element = None
             print("UNKNOWN PARAMETER TYPE!!!")
@@ -171,7 +180,8 @@ class Parameter:
             globals()[self.name] = float(gui_element.text())
         elif self.type is bool:
             globals()[self.name] = gui_element.isChecked()
-
+        elif self.type is list:
+            globals()[self.name] = gui_element.currentText()
         if self.query is None:
             return True
         else:
@@ -183,7 +193,6 @@ class Parameter:
                 return False
             else:
                 gui_element.setStyleSheet('')
-                gui_element.toolTip()
                 gui_element.setToolTip(self.comment)
                 return True
 
