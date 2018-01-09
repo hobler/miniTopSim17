@@ -300,14 +300,14 @@ class Surface:
         nxj, nyj = np.ones_like(xi)*nx[:,np.newaxis], \
                    np.ones_like(xi)*ny[:,np.newaxis]
         
-        cosalpha = (nxj * xij + nyj * yij) / (np.sqrt(nxj ** 2 + nyj ** 2) * \
-                    np.sqrt(xij ** 2 + yij ** 2))
-        cosbeta = (nxi * xij + nyi * yij) / (np.sqrt(nxi ** 2 + nyi ** 2) * \
-                   np.sqrt(xij ** 2 + yij ** 2))
+        cosalpha = np.nan_to_num((nxj * xij + nyj * yij) / (np.sqrt(nxj ** 2 + nyj ** 2) * \
+                    np.sqrt(xij ** 2 + yij ** 2)))
+        cosbeta = np.nan_to_num((nxi * xij + nyi * yij) / (np.sqrt(nxi ** 2 + nyi ** 2) * \
+                   np.sqrt(xij ** 2 + yij ** 2)))
         deltal = np.ones_like(xi)*dl
         distij = np.sqrt(xij ** 2 + yij ** 2)
         
-        fij = (cosalpha*cosbeta*deltal)/(2*distij)
+        fij = np.nan_to_num((cosalpha*cosbeta*deltal)/(2*distij))
         mask = (cosalpha > np.zeros_like(xi)) * (cosbeta > np.zeros_like(xi)) \
                * (np.ones_like(xi) - np.eye(self.x.size))
         return fij*mask
